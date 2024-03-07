@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-fpm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: php-fpm
+  template:
+    metadata:
+      labels:
+        app: php-fpm
+    spec:
+      containers:
+      - name: php-fpm
+        image: adithm123/my-php-image  # Replace with your PHP-FPM image and tag
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - name: magento-data
+          mountPath: /var/www/html
+      volumes:
+      - name: magento-data
+        # Assuming this is where Magento files are stored
+        hostPath:
+          path: /path/to/magento/files

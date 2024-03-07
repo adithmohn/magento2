@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: magento-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: magento
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: magento
+  serviceName: magento
+  template:
+    metadata:
+      labels:
+        app: magento
+    spec:
+      containers:
+      - name: magento
+        image: adithm123/magento  # Replace with your Magento image and tag
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: magento-data
+          mountPath: /var/www/magento2
+  volumeClaimTemplates:
+  - metadata:
+      name: magento-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: standard
+      resources:
+        requests:
+          storage: 10Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: magento
+spec:
+  selector:
+    app: magento
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

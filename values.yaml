@@ -1,0 +1,92 @@
+magento:
+  enabled: true
+  replicas: 1
+  image:
+    repository: magento/magento2
+    tag: 2.4.3
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  volumes:
+    - name: magento-data
+      mountPath: /var/www/html/app/code
+    - name: magento-config
+      mountPath: /var/www/html/app/etc/config.xml
+  # Add any additional Magento specific configurations here
+
+php:
+  enabled: true
+  replicas: 1
+  image:
+    repository: php
+    tag: 7.4-fpm
+  volumes:
+    - name: magento-data
+      mountPath: /var/www/html/app/code
+    - name: magento-config
+      mountPath: /var/www/html/app/etc/config.xml
+  # Add any additional PHP-FPM specific configurations here
+
+mysql:
+  enabled: true
+  replicas: 1
+  image:
+    repository: mysql
+    tag: 5.7
+  mysqlRootPassword: password
+  mysqlUser: magento
+  mysqlPassword: password
+  mysqlDatabase: magento
+  volumes:
+    - name: mysql-data
+      mountPath: /var/lib/mysql
+  # Add any additional MySQL specific configurations here
+
+nginx:
+  enabled: true
+  replicas: 1
+  image:
+    repository: nginx
+    tag: 1.19
+  volumes:
+    - name: nginx-config
+      mountPath: /etc/nginx/nginx.conf
+  # Add any additional Nginx specific configurations here
+
+serviceDiscovery:
+  enabled: true
+  # Add service discovery configurations here
+
+ingress:
+  enabled: true
+  # Add Ingress configurations here
+
+secrets:
+  enabled: true
+  # Add secrets management configurations here
+
+monitoring:
+  enabled: true
+  # Add monitoring configurations here
+
+logging:
+  enabled: true
+  # Add logging configurations here
+
+backup:
+  enabled: true
+  # Add backup and disaster recovery configurations here
+
+volumes:
+  magento-data:
+    emptyDir: {}
+  magento-config:
+    emptyDir: {}
+  mysql-data:
+    emptyDir: {}
+  nginx-config:
+    emptyDir: {}
